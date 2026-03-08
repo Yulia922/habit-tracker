@@ -1,4 +1,5 @@
 from datetime import date
+from typing import Any
 
 from habit_tracker.cli.screens.dashboard import DashboardScreen
 from habit_tracker.domain.habit import Habit
@@ -7,7 +8,12 @@ from habit_tracker.time_provider.fake import FakeTimeProvider
 from tests.test_cli.helpers import capture_render
 
 
-def _make_dashboard(habits=None, completions_map=None, test_mode=False, time=None):
+def _make_dashboard(
+    habits: list[Habit] | None = None,
+    completions_map: dict[int, list[Any]] | None = None,
+    test_mode: bool = False,
+    time: FakeTimeProvider | None = None,
+) -> DashboardScreen:
     return DashboardScreen(
         habits=habits or [],
         completions_map=completions_map or {},
@@ -37,7 +43,8 @@ class TestDashboard:
         assert "1 / 2" in output
 
     def test_skip_button_present_in_test_mode(self):
-        output = capture_render(_make_dashboard(test_mode=True), test_mode=True)
+        habits = [Habit(id=1, name="Run", periodicity=Periodicity.DAILY)]
+        output = capture_render(_make_dashboard(habits=habits, test_mode=True), test_mode=True)
         assert "Skip to next day" in output
 
     def test_skip_button_absent_in_normal_mode(self):
