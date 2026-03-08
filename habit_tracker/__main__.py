@@ -3,9 +3,14 @@ import argparse
 from habit_tracker.cli.app import App
 from habit_tracker.cli.navigation import NavigationStack
 from habit_tracker.cli.renderer import Renderer
+from habit_tracker.cli.screens.add_habit import AddHabitScreen
+from habit_tracker.cli.screens.all_habits import AllHabitsScreen
 from habit_tracker.cli.screens.check_off import CheckOffScreen
 from habit_tracker.cli.screens.dashboard import DashboardScreen
+from habit_tracker.cli.screens.deactivate_confirm import DeactivateConfirmScreen
+from habit_tracker.cli.screens.edit_habit import EditHabitScreen
 from habit_tracker.cli.screens.greeting import GreetingScreen
+from habit_tracker.cli.screens.habit_detail import HabitDetailScreen
 from habit_tracker.db.engine import get_engine
 from habit_tracker.db.schema import create_tables
 from habit_tracker.domain.completion import Completion
@@ -26,6 +31,82 @@ def _load_data(
     habits = habit_repo.list_active()
     completions_map = {h.id: completion_repo.list_for_habit(h.id) for h in habits if h.id is not None}
     return habits, completions_map
+
+
+def _load_all_data(
+    habit_repo: SQLiteHabitRepository, completion_repo: SQLiteCompletionRepository
+) -> tuple[list[Habit], dict[int, list[Completion]]]:
+    habits = habit_repo.list_all()
+    completions_map = {h.id: completion_repo.list_for_habit(h.id) for h in habits if h.id is not None}
+    return habits, completions_map
+
+
+def _build_deactivate_confirm(
+    habit: Habit,
+    habit_service: HabitService,
+    reactivate: bool = False,
+) -> DeactivateConfirmScreen:
+    def on_confirm() -> None:
+        if habit.id is not None:
+            if reactivate:
+                habit_service.reactivate_habit(habit.id)
+            else:
+                habit_service.deactivate_habit(habit.id)
+
+    return DeactivateConfirmScreen(habit=habit, on_confirm=on_confirm, reactivate=reactivate)
+
+
+def _build_edit_habit(
+    habit: Habit,
+    habit_service: HabitService,
+) -> EditHabitScreen:
+    return EditHabitScreen(
+        habit=habit,
+        on_save=lambda hid, n, d, p: habit_service.update_habit(hid, name=n, description=d, periodicity=p),
+    )
+
+
+def _build_habit_detail(
+    habit: Habit,
+    habit_repo: SQLiteHabitRepository,
+    completion_repo: SQLiteCompletionRepository,
+    habit_service: HabitService,
+    time: TimeProvider,
+) -> HabitDetailScreen:
+    comps = completion_repo.list_for_habit(habit.id) if habit.id is not None else []
+    return HabitDetailScreen(
+        habit=habit,
+        completions=comps,
+        time=time,
+        on_check_off=lambda: habit_service.check_off(habit.id) if habit.id else None,
+        on_edit=lambda: _build_edit_habit(habit, habit_service),
+        on_deactivate=lambda: _build_deactivate_confirm(habit, habit_service),
+        on_reactivate=lambda: _build_deactivate_confirm(habit, habit_service, reactivate=True),
+    )
+
+
+def _build_add_habit(
+    habit_service: HabitService,
+) -> AddHabitScreen:
+    return AddHabitScreen(
+        on_save=lambda name, desc, period: habit_service.create_habit(name, period, desc),
+    )
+
+
+def _build_all_habits(
+    habit_repo: SQLiteHabitRepository,
+    completion_repo: SQLiteCompletionRepository,
+    habit_service: HabitService,
+    time: TimeProvider,
+) -> AllHabitsScreen:
+    habits, completions_map = _load_all_data(habit_repo, completion_repo)
+    return AllHabitsScreen(
+        habits=habits,
+        completions_map=completions_map,
+        time=time,
+        on_select=lambda h: _build_habit_detail(h, habit_repo, completion_repo, habit_service, time),
+        on_add=lambda: _build_add_habit(habit_service),
+    )
 
 
 def _build_check_off(
@@ -58,6 +139,8 @@ def _build_dashboard(
         time=time,
         test_mode=test_mode,
         on_check_off=lambda: _build_check_off(habit_repo, completion_repo, habit_service, time),
+        on_all_habits=lambda: _build_all_habits(habit_repo, completion_repo, habit_service, time),
+        on_manage=lambda: _build_all_habits(habit_repo, completion_repo, habit_service, time),
     )
 
 

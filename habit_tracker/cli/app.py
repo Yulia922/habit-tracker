@@ -16,15 +16,20 @@ class App:
             self._renderer.clear()
             screen.render(self._renderer)
 
+            needs_text = getattr(screen, "needs_text_input", False)
+
             try:
-                key = self._session.prompt("\n  > ").strip().lower()
+                raw = self._session.prompt("\n  > ")
             except (KeyboardInterrupt, EOFError):
                 break
 
-            if not key:
-                key = "enter"
-
-            action = screen.handle_key(key)
+            if needs_text:
+                action = screen.handle_input(raw)  # type: ignore[union-attr,unused-ignore]
+            else:
+                key = raw.strip().lower()
+                if not key:
+                    key = "enter"
+                action = screen.handle_key(key)
 
             if action is None:
                 continue
