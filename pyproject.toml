@@ -1,0 +1,58 @@
+[project]
+name = "habit-tracker"
+version = "0.1.0"
+description = "CLI habit tracker for daily and weekly habits with streak tracking"
+requires-python = ">=3.12"
+dependencies = [
+    "rich",
+    "prompt-toolkit",
+    "sqlalchemy",
+]
+
+[project.scripts]
+habit-tracker = "habit_tracker.__main__:main"
+
+[dependency-groups]
+dev = [
+    "ruff",
+    "mypy",
+    "pytest",
+    "pytest-cov",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "C4", "UP", "SIM"]
+ignore = ["E501"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_return_any = true
+warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ["-v", "--tb=short", "--cov=habit_tracker", "--cov-report=term-missing", "--cov-fail-under=65", "--strict-markers"]
+markers = [
+    "unit: isolated unit tests",
+    "integration: tests that touch the DB",
+]
+
+[tool.coverage.run]
+source = ["habit_tracker"]
+omit = ["*/tests/*", "*/__main__.py"]
+
+[tool.coverage.report]
+exclude_lines = ["pragma: no cover", "raise NotImplementedError"]
