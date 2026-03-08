@@ -16,6 +16,7 @@ from habit_tracker.cli.screens.deactivate_confirm import DeactivateConfirmScreen
 from habit_tracker.cli.screens.edit_habit import EditHabitScreen
 from habit_tracker.cli.screens.greeting import GreetingScreen
 from habit_tracker.cli.screens.habit_detail import HabitDetailScreen
+from habit_tracker.cli.screens.skip_day_confirm import SkipDayConfirmScreen
 from habit_tracker.db.engine import get_engine
 from habit_tracker.db.schema import create_tables
 from habit_tracker.domain.completion import Completion
@@ -173,6 +174,25 @@ def _build_check_off(
     )
 
 
+def _build_skip_day(
+    habit_repo: SQLiteHabitRepository,
+    completion_repo: SQLiteCompletionRepository,
+    time: TimeProvider,
+) -> SkipDayConfirmScreen:
+    habits, completions_map = _load_data(habit_repo, completion_repo)
+
+    def on_skip() -> None:
+        if hasattr(time, "advance_day"):
+            time.advance_day()  # type: ignore[union-attr,unused-ignore]
+
+    return SkipDayConfirmScreen(
+        habits=habits,
+        completions_map=completions_map,
+        time=time,
+        on_skip=on_skip,
+    )
+
+
 def _build_dashboard(
     habit_repo: SQLiteHabitRepository,
     completion_repo: SQLiteCompletionRepository,
@@ -190,6 +210,7 @@ def _build_dashboard(
         on_all_habits=lambda: _build_all_habits(habit_repo, completion_repo, habit_service, time),
         on_analytics=lambda: _build_analytics_menu(habit_repo, completion_repo, time),
         on_manage=lambda: _build_all_habits(habit_repo, completion_repo, habit_service, time),
+        on_skip_day=lambda: _build_skip_day(habit_repo, completion_repo, time),
     )
 
 
