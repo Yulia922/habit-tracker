@@ -70,7 +70,18 @@ class TestAnalyticsStreaks:
 
 class TestAnalyticsStruggling:
     def test_shows_empty_state_when_none_struggling(self) -> None:
-        comps = {1: [Completion(id=1, habit_id=1, completed_at=datetime(2026, 3, 8))]}
+        # Provide completions for 11 of 14 days so the habit is not struggling
+        comps = {
+            1: [
+                Completion(id=i, habit_id=1, completed_at=datetime(2026, 3, d))
+                for i, d in enumerate(range(1, 9), start=1)
+            ]
+            + [
+                Completion(id=20, habit_id=1, completed_at=datetime(2026, 2, 27)),
+                Completion(id=21, habit_id=1, completed_at=datetime(2026, 2, 26)),
+                Completion(id=22, habit_id=1, completed_at=datetime(2026, 2, 25)),
+            ]
+        }
         screen = AnalyticsStrugglingScreen(habits=[_RUN], completions_map=comps, time=_TIME)
         output = capture_render(screen)
         assert "all good" in output.lower() or "no habits" in output.lower() or "great" in output.lower()
@@ -84,8 +95,7 @@ class TestCompletionHistory:
 
     def test_paginates(self) -> None:
         comps = [
-            Completion(id=i, habit_id=1, completed_at=datetime(2026, 2, d))
-            for i, d in enumerate(range(1, 29), start=1)
+            Completion(id=i, habit_id=1, completed_at=datetime(2026, 2, d)) for i, d in enumerate(range(1, 29), start=1)
         ]
         screen = CompletionHistoryScreen(habit=_RUN, completions=comps, time=_TIME, page_size=7)
         output = capture_render(screen)
