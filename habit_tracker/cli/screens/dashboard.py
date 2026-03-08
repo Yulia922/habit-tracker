@@ -25,6 +25,7 @@ class DashboardScreen:
         on_analytics: Callable[[], Any] | None = None,
         on_manage: Callable[[], Any] | None = None,
         on_skip_day: Callable[[], Any] | None = None,
+        refresh_data: Callable[[], tuple[list[Habit], dict[int, list[Completion]]]] | None = None,
     ) -> None:
         self._habits = habits
         self._completions = completions_map
@@ -35,6 +36,11 @@ class DashboardScreen:
         self._on_analytics = on_analytics
         self._on_manage = on_manage
         self._on_skip_day = on_skip_day
+        self._refresh_data = refresh_data
+
+    def on_resume(self) -> None:
+        if self._refresh_data:
+            self._habits, self._completions = self._refresh_data()
 
     def render(self, r: Renderer) -> None:
         r.header("DASHBOARD", self._time.today())

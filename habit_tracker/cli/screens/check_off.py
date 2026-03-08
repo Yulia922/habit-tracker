@@ -38,6 +38,9 @@ class CheckOffScreen:
         r.print()
 
         if not self._pending:
+            if self._message:
+                r.print(self._message)
+                r.print()
             r.print("Everything is done for today! ✓")
             r.print()
             r.print("[B] Back")

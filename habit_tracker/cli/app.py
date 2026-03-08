@@ -40,6 +40,9 @@ class App:
             elif isinstance(action, Pop):
                 if self._stack.depth > 1:
                     self._stack.pop()
+                    top = self._stack.current()
+                    if hasattr(top, "on_resume"):
+                        top.on_resume()  # type: ignore[union-attr,unused-ignore]
             elif isinstance(action, Replace):
                 self._stack.replace(action.screen)
             elif isinstance(action, Refresh):

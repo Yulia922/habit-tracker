@@ -211,6 +211,7 @@ def _build_dashboard(
         on_analytics=lambda: _build_analytics_menu(habit_repo, completion_repo, time),
         on_manage=lambda: _build_all_habits(habit_repo, completion_repo, habit_service, time),
         on_skip_day=lambda: _build_skip_day(habit_repo, completion_repo, time),
+        refresh_data=lambda: _load_data(habit_repo, completion_repo),
     )
 
 
