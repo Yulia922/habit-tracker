@@ -1,4 +1,3 @@
-from habit_tracker.cli.navigation import Pop, Refresh
 from habit_tracker.cli.screens.add_habit import AddHabitScreen
 from tests.test_cli.helpers import capture_render
 

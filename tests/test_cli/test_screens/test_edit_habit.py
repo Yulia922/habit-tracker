@@ -1,9 +1,7 @@
-from datetime import date
 
 from habit_tracker.cli.screens.edit_habit import EditHabitScreen
 from habit_tracker.domain.habit import Habit
 from habit_tracker.domain.periodicity import Periodicity
-from habit_tracker.time_provider.fake import FakeTimeProvider
 from tests.test_cli.helpers import capture_render
 
 
