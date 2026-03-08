@@ -5,7 +5,12 @@ from habit_tracker.cli.navigation import NavigationStack
 from habit_tracker.cli.renderer import Renderer
 from habit_tracker.cli.screens.add_habit import AddHabitScreen
 from habit_tracker.cli.screens.all_habits import AllHabitsScreen
+from habit_tracker.cli.screens.analytics_menu import AnalyticsMenuScreen
+from habit_tracker.cli.screens.analytics_overview import AnalyticsOverviewScreen
+from habit_tracker.cli.screens.analytics_streaks import AnalyticsStreaksScreen
+from habit_tracker.cli.screens.analytics_struggling import AnalyticsStrugglingScreen
 from habit_tracker.cli.screens.check_off import CheckOffScreen
+from habit_tracker.cli.screens.completion_history import CompletionHistoryScreen
 from habit_tracker.cli.screens.dashboard import DashboardScreen
 from habit_tracker.cli.screens.deactivate_confirm import DeactivateConfirmScreen
 from habit_tracker.cli.screens.edit_habit import EditHabitScreen
@@ -109,6 +114,49 @@ def _build_all_habits(
     )
 
 
+def _build_completion_history(
+    habit: Habit,
+    completion_repo: SQLiteCompletionRepository,
+    time: TimeProvider,
+) -> CompletionHistoryScreen:
+    comps = completion_repo.list_for_habit(habit.id) if habit.id is not None else []
+    return CompletionHistoryScreen(habit=habit, completions=comps, time=time)
+
+
+def _build_analytics_menu(
+    habit_repo: SQLiteHabitRepository,
+    completion_repo: SQLiteCompletionRepository,
+    time: TimeProvider,
+) -> AnalyticsMenuScreen:
+    def build_overview() -> AnalyticsOverviewScreen:
+        habits, completions_map = _load_data(habit_repo, completion_repo)
+        return AnalyticsOverviewScreen(habits=habits, completions_map=completions_map, time=time)
+
+    def build_streaks() -> AnalyticsStreaksScreen:
+        habits, completions_map = _load_data(habit_repo, completion_repo)
+        return AnalyticsStreaksScreen(habits=habits, completions_map=completions_map, time=time)
+
+    def build_struggling() -> AnalyticsStrugglingScreen:
+        habits, completions_map = _load_data(habit_repo, completion_repo)
+        return AnalyticsStrugglingScreen(habits=habits, completions_map=completions_map, time=time)
+
+    def build_history() -> AllHabitsScreen:
+        habits, completions_map = _load_all_data(habit_repo, completion_repo)
+        return AllHabitsScreen(
+            habits=habits,
+            completions_map=completions_map,
+            time=time,
+            on_select=lambda h: _build_completion_history(h, completion_repo, time),
+        )
+
+    return AnalyticsMenuScreen(
+        on_overview=build_overview,
+        on_streaks=build_streaks,
+        on_struggling=build_struggling,
+        on_history=build_history,
+    )
+
+
 def _build_check_off(
     habit_repo: SQLiteHabitRepository,
     completion_repo: SQLiteCompletionRepository,
@@ -140,6 +188,7 @@ def _build_dashboard(
         test_mode=test_mode,
         on_check_off=lambda: _build_check_off(habit_repo, completion_repo, habit_service, time),
         on_all_habits=lambda: _build_all_habits(habit_repo, completion_repo, habit_service, time),
+        on_analytics=lambda: _build_analytics_menu(habit_repo, completion_repo, time),
         on_manage=lambda: _build_all_habits(habit_repo, completion_repo, habit_service, time),
     )
 
