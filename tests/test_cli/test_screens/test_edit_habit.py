@@ -1,4 +1,3 @@
-
 from habit_tracker.cli.screens.edit_habit import EditHabitScreen
 from habit_tracker.domain.habit import Habit
 from habit_tracker.domain.periodicity import Periodicity
