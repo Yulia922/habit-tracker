@@ -75,9 +75,14 @@ class TestLongestStreak:
     def test_finds_best_run_not_current(self):
         habit = Habit(name="X", periodicity=Periodicity.DAILY)
         dates = [
-            date(2026, 2, 1), date(2026, 2, 2), date(2026, 2, 3), date(2026, 2, 4), date(2026, 2, 5),  # 5
+            date(2026, 2, 1),
+            date(2026, 2, 2),
+            date(2026, 2, 3),
+            date(2026, 2, 4),
+            date(2026, 2, 5),  # 5
             # gap
-            date(2026, 3, 7), date(2026, 3, 8),  # 2
+            date(2026, 3, 7),
+            date(2026, 3, 8),  # 2
         ]
         assert calculate_longest_streak(habit, _completions(1, dates)) == 5
 
