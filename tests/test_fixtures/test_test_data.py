@@ -1,5 +1,5 @@
 from habit_tracker.domain.periodicity import Periodicity
-from habit_tracker.fixtures.test_data import TEST_HABITS, TEST_MODE_START
+from habit_tracker.fixtures.test_data import TEST_HABITS, TEST_MODE_START, load_test_fixtures
 
 
 class TestFixtureData:
@@ -27,3 +27,14 @@ class TestFixtureData:
         from datetime import date
 
         assert TEST_MODE_START == date(2026, 3, 1)
+
+
+class TestLoadFixtures:
+    def test_creates_five_active_habits(self, habit_repo, completion_repo):
+        load_test_fixtures(habit_repo, completion_repo)
+        assert len(habit_repo.list_active()) == 5
+
+    def test_creates_completions_for_every_habit(self, habit_repo, completion_repo):
+        load_test_fixtures(habit_repo, completion_repo)
+        for habit in habit_repo.list_active():
+            assert len(completion_repo.list_for_habit(habit.id)) > 0, f"{habit.name} has no completions"
