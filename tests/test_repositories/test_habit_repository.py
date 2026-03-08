@@ -1,7 +1,5 @@
 from datetime import datetime
 
-import pytest
-
 from habit_tracker.domain.habit import Habit
 from habit_tracker.domain.habit_status import HabitStatus
 from habit_tracker.domain.periodicity import Periodicity

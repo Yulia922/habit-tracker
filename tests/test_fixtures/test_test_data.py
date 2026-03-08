@@ -26,7 +26,7 @@ class TestFixtureData:
     def test_start_date_is_march_first(self):
         from datetime import date
 
-        assert TEST_MODE_START == date(2026, 3, 1)
+        assert date(2026, 3, 1) == TEST_MODE_START
 
 
 class TestLoadFixtures:

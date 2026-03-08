@@ -1,4 +1,4 @@
-from typing import Any, Protocol
+from typing import Protocol
 
 from sqlalchemy import Engine, select
 from sqlalchemy.engine import RowMapping

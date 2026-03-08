@@ -1,8 +1,8 @@
-from datetime import date, timedelta
+from datetime import date
 
+from habit_tracker.time_provider.fake import FakeTimeProvider
 from habit_tracker.time_provider.real import RealTimeProvider
 from habit_tracker.time_provider.test_mode import TestModeTimeProvider
-from habit_tracker.time_provider.fake import FakeTimeProvider
 
 
 class TestRealTimeProvider:

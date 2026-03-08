@@ -4,8 +4,8 @@ import pytest
 from sqlalchemy import create_engine
 
 from habit_tracker.db.schema import create_tables
-from habit_tracker.repositories.habit_repository import SQLiteHabitRepository
 from habit_tracker.repositories.completion_repository import SQLiteCompletionRepository
+from habit_tracker.repositories.habit_repository import SQLiteHabitRepository
 from habit_tracker.time_provider.fake import FakeTimeProvider
 
 

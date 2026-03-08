@@ -1,7 +1,6 @@
-from datetime import date, datetime
+from datetime import date
 
 from habit_tracker.cli.screens.greeting import GreetingScreen
-from habit_tracker.domain.completion import Completion
 from habit_tracker.domain.habit import Habit
 from habit_tracker.domain.periodicity import Periodicity
 from habit_tracker.time_provider.fake import FakeTimeProvider

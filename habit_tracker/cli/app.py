@@ -1,5 +1,4 @@
 from prompt_toolkit import PromptSession
-from prompt_toolkit.keys import Keys
 
 from habit_tracker.cli.navigation import NavigationStack, Pop, Push, Quit, Refresh, Replace
 from habit_tracker.cli.renderer import Renderer
