@@ -43,14 +43,14 @@ class AddHabitScreen:
                 r.print()
             r.print("Habit name: _")
             r.print()
-            r.print("[B] Cancel")
+            r.print("[ESC] Cancel")
 
         elif self._step == 2:
             r.print(f"Habit name:   {self._name}")
             r.print("Description:  _")
             r.print()
             r.print("(Optional — press ENTER to skip)")
-            r.print("[B] Back")
+            r.print("[ESC] Back")
 
         elif self._step == 3:
             r.print(f"Habit name:   {self._name}")

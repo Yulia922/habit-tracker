@@ -31,13 +31,13 @@ class EditHabitScreen:
         if self._editing_field == 1:
             r.print(f"New name [{self._name}]: _")
             r.print()
-            r.print("[B] Cancel")
+            r.print("[ESC] Cancel")
             return
 
         if self._editing_field == 2:
             r.print(f"New description [{self._description}]: _")
             r.print()
-            r.print("[B] Cancel")
+            r.print("[ESC] Cancel")
             return
 
         if self._editing_field == 3:

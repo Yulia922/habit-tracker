@@ -21,6 +21,7 @@ class DashboardScreen:
         time: TimeProvider,
         test_mode: bool = False,
         on_check_off: Callable[[], Any] | None = None,
+        on_add_habit: Callable[[], Any] | None = None,
         on_all_habits: Callable[[], Any] | None = None,
         on_analytics: Callable[[], Any] | None = None,
         on_manage: Callable[[], Any] | None = None,
@@ -32,6 +33,7 @@ class DashboardScreen:
         self._time = time
         self._test_mode = test_mode
         self._on_check_off = on_check_off
+        self._on_add_habit = on_add_habit
         self._on_all_habits = on_all_habits
         self._on_analytics = on_analytics
         self._on_manage = on_manage
@@ -93,8 +95,11 @@ class DashboardScreen:
     def handle_key(self, key: str) -> Action | None:
         if key == keys.QUIT:
             return Quit()
-        if key == "1" and self._on_check_off:
-            return Push(self._on_check_off())
+        if key == "1":
+            if not self._habits and self._on_add_habit:
+                return Push(self._on_add_habit())
+            if self._habits and self._on_check_off:
+                return Push(self._on_check_off())
         if key == "2" and self._on_all_habits:
             return Push(self._on_all_habits())
         if key == "3" and self._on_analytics:

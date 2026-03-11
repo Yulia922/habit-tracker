@@ -207,6 +207,7 @@ def _build_dashboard(
         time=time,
         test_mode=test_mode,
         on_check_off=lambda: _build_check_off(habit_repo, completion_repo, habit_service, time),
+        on_add_habit=lambda: _build_add_habit(habit_service),
         on_all_habits=lambda: _build_all_habits(habit_repo, completion_repo, habit_service, time),
         on_analytics=lambda: _build_analytics_menu(habit_repo, completion_repo, time),
         on_manage=lambda: _build_all_habits(habit_repo, completion_repo, habit_service, time),
