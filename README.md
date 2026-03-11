@@ -14,19 +14,6 @@ A CLI tool for tracking daily and weekly habits. Create habits, check them off, 
 - Test mode with predefined habits
 - Analytics dashboard
 
-## Project Structure
-
-habit_tracker/
-│
-├── cli/            # Command-line interface screens
-├── domain/         # Core domain models and business logic
-├── services/       # Application services and analytics
-├── repositories/   # Data access layer
-├── db/             # Database schema and engine
-├── fixtures/       # Test data
-├── time_provider/  # Time abstraction for testing
-└── __main__.py     # Application entry point
-
 ## Setup
 
 ```bash
